@@ -11,8 +11,6 @@
                :model="loginForm">
         <el-form-item prop="mobile">
           <el-input v-model="loginForm.mobile"
-                    ref='loginMobile'
-                    autofocus="true"
                     placeholder="手机号"></el-input>
         </el-form-item>
         <el-form-item>
@@ -24,21 +22,23 @@
               </el-form-item>
             </el-col>
 
-            <el-col :span="7"
-                    :push=3>
-              <el-button @click="handleCode"
+            <el-col :span="8"
+                    :push=2>
+              <el-button @click="handleGetCode"
                          :disabled="timeCode"
+                         :loading="isGetCode"
                          class="code-btn">{{btnText}}</el-button>
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item>
-          <el-checkbox>
+        <el-form-item prop="agree">
+          <el-checkbox v-model="loginForm.agree">
           </el-checkbox>
-          我已阅读并同意 <el-link type="primary"
-                   :underline="false"> 用户协议 </el-link> 和
-          <el-link type="primary"
-                   :underline="false"> 隐私条款 </el-link>
+          <span> 我已阅读并同意 <el-link type="primary"
+                     :underline="false"> 用户协议 </el-link> 和
+            <el-link type="primary"
+                     :underline="false"> 隐私条款 </el-link>
+          </span>
         </el-form-item>
         <el-form-item>
           <el-button class="login-btn"
@@ -60,26 +60,29 @@ export default {
       // 表单数据
       loginForm: {
         mobile: '',
-        code: ''
+        code: '',
+        agree: ''
       },
       timeCode: false,
       btnText: '发送验证码',
+      isGetCode: false,
       // 提交时按钮禁用
       isloading: false,
       // 通过 initGeetest 得到的极验验证码对象
       captchaObj: null,
+      initGeetestMobile: '',
       // 验证规则
       rules: {
         mobile: [
-          { required: true, message: '请输入11位手机号', trigger: 'blur' },
+          { required: true, message: '请输入手机号', trigger: 'blur' },
           { len: 11, message: '请输入11位手机号', trigger: 'blur' }
         ],
         code: [
-          { required: true, message: '请输入验证码', trigger: 'blur' },
-          { len: 6, message: '请输入6位验证码', trigger: 'blur' }
+          { required: true, message: '请输入验证码', trigger: 'blur' }
         ],
         agree: [
-          { required: true, message: '是否同意协议', trigger: 'change' }
+          { required: true, message: '是否同意协议', trigger: 'change' },
+          { pattern: /true/, message: '请同意协议', trigger: 'change' }
         ]
       }
     }
@@ -130,11 +133,12 @@ export default {
       })
     },
     handleGetCode () {
-      this.$refs['mobile'].validate((valid) => {
+      this.$refs['loginForm'].validateField('mobile', (valid) => {
         if (valid) {
-          alert('submit!')
+          return false
         } else {
-          console.log('error submit!!')
+          this.isGetCode = true
+          this.handleCode()
           return false
         }
       })
@@ -143,7 +147,8 @@ export default {
     handleCode () {
       const mobile = this.loginForm.mobile
       const that = this
-      if (this.captchaObj) {
+      if (this.captchaObj && mobile === this.initGeetestMobile) {
+        that.isGetCode = false
         return this.captchaObj.verify()
       }
       axios({
@@ -159,9 +164,16 @@ export default {
           new_captcha: data.new_captcha,
           product: 'bind'
         }, function (captchaObj) {
+          if (document.querySelector('.geetest_panel')) {
+            document.body.removeChild(document.querySelector('.geetest_panel'))
+          }
+
           that.captchaObj = captchaObj
           // 这里可以调用验证实例 captchaObj 的实例方法
           captchaObj.onReady(function () {
+            that.isGetCode = false
+            // 存储实例initGeerest的电话
+            that.initGeetestMobile = mobile
             // 验证码ready之后才能调用verify方法显示验证码
             captchaObj.verify() // 显示验证码
           }).onSuccess(function () {
