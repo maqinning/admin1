@@ -4,3 +4,29 @@ body {
   padding: 0;
   height: 100%;
 }
+html .el-submenu__icon-arrow,
+body .el-submenu__icon-arrow {
+  font-size: 18px;
+}
+html .el-icon-arrow-down:before,
+body .el-icon-arrow-down:before {
+  font-size: 18px;
+}
+html .content .el-card__body,
+body .content .el-card__body {
+  padding-top: 0;
+}
+html .el-card__header,
+body .el-card__header {
+  border-bottom: 1px dashed #ccc;
+  margin: 0 10px;
+}
+ul,
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ql-editor {
+  min-height: 200px !important;
+}

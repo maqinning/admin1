@@ -52,16 +52,16 @@
 </template>
 <script>
 import '@/vendor/gt.js'
-import axios from 'axios'
+// import axios from 'axios'
 export default {
   name: 'login',
   data () {
     return {
       // 表单数据
       loginForm: {
-        mobile: '',
-        code: '',
-        agree: ''
+        mobile: '13911111111',
+        code: '246810',
+        agree: true
       },
       timeCode: false,
       btnText: '发送验证码',
@@ -113,17 +113,16 @@ export default {
     // 提交表单的方法
     onSubmit () {
       const data = this.loginForm
-      axios({
+      this.$axios({
         method: 'POST',
-        url: 'http://ttapi.research.itcast.cn/mp/v1_0/authorizations',
+        url: '/authorizations',
         headers: { 'content-type': 'application/json' },
         data: data
-      }).then(res => {
+      }).then(data => {
         this.open1()
+        window.localStorage.setItem('user_infor', JSON.stringify(data))
         this.isloading = false
-        this.$router.push({
-          name: 'home'
-        })
+        this.$router.push('/')
       }).catch(err => {
         if (err) {
           this.open4()
@@ -151,11 +150,11 @@ export default {
         that.isGetCode = false
         return this.captchaObj.verify()
       }
-      axios({
+      this.$axios({
         method: 'GET',
-        url: 'http://ttapi.research.itcast.cn/mp/v1_0/captchas/' + mobile
-      }).then(res => {
-        const data = res.data.data
+        url: '/captchas/' + mobile
+      }).then(data => {
+        // const data = res.data.data
         window.initGeetest({
           // 以下配置参数来自服务端 SDK
           gt: data.gt,
@@ -179,9 +178,9 @@ export default {
           }).onSuccess(function () {
             // your code
             var result = captchaObj.getValidate()
-            axios({
+            that.$axios({
               method: 'GET',
-              url: 'http://ttapi.research.itcast.cn/mp/v1_0/sms/codes/' + mobile,
+              url: '/sms/codes/' + mobile,
               params: {
                 challenge: result.geetest_challenge,
                 validate: result.geetest_validate,

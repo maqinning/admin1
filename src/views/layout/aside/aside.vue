@@ -10,8 +10,9 @@
              @close="handleClose"
              background-color="#545c64"
              text-color="#fff"
+             router
              active-text-color="#409EFF">
-      <el-menu-item index="3">
+      <el-menu-item index="/">
         <i class="iconfont icon-shouye"></i>
         <span slot="title">首页</span>
       </el-menu-item>
@@ -21,10 +22,10 @@
           <span>内容管理</span>
         </template>
         <el-menu-item-group>
-          <el-menu-item index="1-1">发布文章</el-menu-item>
-          <el-menu-item index="1-2">内容列表</el-menu-item>
-          <el-menu-item index="1-3">评论列表</el-menu-item>
-          <el-menu-item index="1-4">素材管理</el-menu-item>
+          <el-menu-item index="/publish">发布文章</el-menu-item>
+          <el-menu-item index="/article">文章列表</el-menu-item>
+          <el-menu-item index="/comment">评论列表</el-menu-item>
+          <el-menu-item index="/image">素材管理</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="2">
@@ -39,7 +40,7 @@
           <el-menu-item index="2-4">粉丝列表</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-menu-item index="4">
+      <el-menu-item index="/account">
         <i class="iconfont icon-zhanghu"></i>
         <span slot="title">账户信息</span>
       </el-menu-item>
@@ -60,10 +61,10 @@ export default {
   watch: {},
   methods: {
     handleOpen (key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
     },
     handleClose (key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
     }
   },
   components: {}
@@ -78,7 +79,6 @@ export default {
   span {
     font-size: 16px;
   }
-
   .iconfont {
     margin-right: 10px;
     font-size: 20px;
